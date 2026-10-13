@@ -35,13 +35,12 @@ const authHeaders = async () => {
 const formatearFecha = (fechaStr: string) => {
   if (!fechaStr) return "";
   const fecha = new Date(fechaStr);
-  return fecha.toLocaleDateString("ES-es", {
-    minute: "2-digit",
-    hour: "2-digit",
+  return fecha.toLocaleString("es-ES", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    hour12: true
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
@@ -68,7 +67,6 @@ export default function HomeScreen() {
       .finally(() => setCargando(false));
   };
 
-  // Verificar sesión y cargar tareas al abrir la pantalla
   useEffect(() => {
     const verificar = async () => {
       const token = await AsyncStorage.getItem("userToken");
@@ -86,7 +84,6 @@ export default function HomeScreen() {
     cargarTareas();
   };
 
-  // Cerrar sesión
   const cerrarSesion = async () => {
     await AsyncStorage.removeItem("userToken");
     router.replace("/");
@@ -125,7 +122,6 @@ export default function HomeScreen() {
     }
   };
 
-  // Eliminar tarea
   const handleEliminarTarea = async (id: number) => {
     try {
       const response = await fetch(`${API_URL}/v2/tareas/${id}`, {
@@ -139,14 +135,12 @@ export default function HomeScreen() {
     }
   };
 
-  // Renderizado de cada item de la lista
   const tareaRender: ListRenderItem<Tarea> = ({ item }) => (
     <View style={styles.cardTarea}>
       <Pressable
         style={styles.contenidoTarea}
         onPress={() => toggleCompletada(item)}
       >
-        {/* Checkbox visual */}
         <View
           style={[
             styles.checkbox,
@@ -156,7 +150,6 @@ export default function HomeScreen() {
           {item.completada && <Text style={styles.checkmark}>✓</Text>}
         </View>
 
-        {/* Texto de la tarea */}
         <Text
           style={[
             styles.textoTarea,
@@ -169,7 +162,6 @@ export default function HomeScreen() {
 
       <Text style={styles.fecha}>{formatearFecha(item.creadoEn)}</Text>
 
-      {/* Botón de eliminar */}
       <Pressable
         style={styles.botonEliminar}
         onPress={() => handleEliminarTarea(item.id)}
@@ -193,7 +185,6 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      {/* Formulario de creación */}
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
@@ -207,7 +198,6 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      {/* Mensaje de error */}
       {error ? (
         <Pressable style={styles.errorContainer} onPress={reintentar}>
           <Text style={styles.errorText}>{error}</Text>
@@ -215,7 +205,6 @@ export default function HomeScreen() {
         </Pressable>
       ) : null}
 
-      {/* Lista de tareas */}
       {cargando ? (
         <ActivityIndicator style={styles.loader} size="large" color="blue" />
       ) : (
@@ -226,9 +215,7 @@ export default function HomeScreen() {
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                🎉 No tienes tareas pendientes
-              </Text>
+              <Text style={styles.emptyText}>No tienes tareas pendientes</Text>
             </View>
           }
         />
@@ -240,7 +227,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f6f8", // Fondo gris claro consistente
+    backgroundColor: "#f4f6f8",
   },
   header: {
     flexDirection: "row",
@@ -281,14 +268,13 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 48, // Mantenemos la altura táctil estándar
+    height: 48,
     backgroundColor: "#ffffff",
     borderRadius: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: "#e0e0e0",
     fontSize: 15,
-    // Sombras ligeras para elevación
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -298,7 +284,7 @@ const styles = StyleSheet.create({
   botonAgregar: {
     width: 48,
     height: 48,
-    backgroundColor: "blue", // Color primario del login
+    backgroundColor: "blue",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -320,7 +306,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 10,
-    // Estilo de tarjeta idéntico al login
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -398,7 +383,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   fecha: {
-    alignItems: "center",
-    color: "grey"
+    fontSize: 12,
+    color: "#888",
   },
 });

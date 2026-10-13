@@ -88,14 +88,19 @@ export default function RegisterScreen() {
           onChangeText={setPassword}
         />
 
-        {/* Selector de rol */}
         <View style={styles.rolContainer}>
           <Pressable
-            style={[styles.rolBoton, rol === "usuario" && styles.rolBotonActivo]}
+            style={[
+              styles.rolBoton,
+              rol === "usuario" && styles.rolBotonActivo,
+            ]}
             onPress={() => setRol("usuario")}
           >
             <Text
-              style={[styles.rolTexto, rol === "usuario" && styles.rolTextoActivo]}
+              style={[
+                styles.rolTexto,
+                rol === "usuario" && styles.rolTextoActivo,
+              ]}
             >
               Usuario
             </Text>
@@ -105,7 +110,10 @@ export default function RegisterScreen() {
             onPress={() => setRol("admin")}
           >
             <Text
-              style={[styles.rolTexto, rol === "admin" && styles.rolTextoActivo]}
+              style={[
+                styles.rolTexto,
+                rol === "admin" && styles.rolTextoActivo,
+              ]}
             >
               Admin
             </Text>
@@ -144,9 +152,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 16,
-    padding: 24, // Padding adecuado para que no rompa la pantalla
-    width: "85%", // Ancho adaptable para cualquier móvil
-    maxWidth: 400, // Para que no se estire demasiado en pantallas grandes
+    padding: 24,
+    width: "85%",
+    maxWidth: 400,
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -160,8 +168,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "blue",
-    height: 48, // Altura accesible
-    width: "100%", // Ancho completo del contenedor
+    height: 48,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 8,
@@ -174,7 +182,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 48, // Altura accesible
+    height: 48,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
