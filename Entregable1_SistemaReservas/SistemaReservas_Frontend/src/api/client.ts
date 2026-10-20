@@ -17,10 +17,6 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * El proveedor de sesión registra aquí su cierre de sesión para que cualquier
- * respuesta 401 (token vencido o inválido) devuelva al usuario al login.
- */
 let onUnauthorized: (() => void) | null = null;
 
 export function setUnauthorizedHandler(handler: (() => void) | null) {
@@ -71,8 +67,6 @@ export async function api<T>(
   }
 
   if (!response.ok) {
-    // Solo cerramos la sesión si la petición llevaba un token: los 401 del
-    // login son credenciales inválidas y deben mostrarse como error normal.
     if (response.status === 401 && token) {
       onUnauthorized?.();
     }

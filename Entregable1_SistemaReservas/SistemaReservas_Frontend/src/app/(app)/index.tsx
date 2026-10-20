@@ -39,7 +39,6 @@ export default function ServiciosScreen() {
         const data = await listarServicios(session.token);
         setServicios(data);
       } catch (caught) {
-        // Un 401 ya cierra la sesión desde el cliente de API.
         if (caught instanceof ApiError && caught.status === 401) return;
 
         setError(

@@ -36,7 +36,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restaurar la sesión guardada en AsyncStorage al abrir la app.
   useEffect(() => {
     let active = true;
 
@@ -54,7 +53,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
         if (active) setSession({ token, user });
       } catch {
-        // Token corrupto o mal formado: se descarta.
         await borrarToken();
       } finally {
         if (active) setIsLoading(false);
@@ -66,7 +64,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  // Si cualquier petición autenticada devuelve 401, se cierra la sesión.
   useEffect(() => {
     setUnauthorizedHandler(() => {
       void borrarToken();
@@ -76,7 +73,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     return () => setUnauthorizedHandler(null);
   }, []);
 
-  // Cierra la sesión automáticamente al llegar la fecha de expiración del token.
   useEffect(() => {
     if (!session) return;
 
@@ -112,7 +108,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     rol: Rol;
   }) {
     await registrar(data);
-    // El registro no devuelve token, así que iniciamos sesión enseguida.
     await signIn(data.email, data.password);
   }
 

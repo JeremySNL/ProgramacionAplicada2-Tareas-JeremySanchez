@@ -58,14 +58,6 @@ export default function LoginScreen() {
             contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled">
             <View style={styles.brand}>
-              <View
-                style={[styles.logo, { backgroundColor: theme.primary }]}>
-                <ThemedText
-                  type="subtitle"
-                  style={[styles.logoText, { color: theme.primaryText }]}>
-                  SR
-                </ThemedText>
-              </View>
               <ThemedText type="subtitle" style={styles.centerText}>
                 Sistema de Reservas
               </ThemedText>

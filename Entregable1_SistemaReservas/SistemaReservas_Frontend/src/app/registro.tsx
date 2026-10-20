@@ -167,7 +167,7 @@ export default function RegistroScreen() {
                   })}
                 </View>
                 <ThemedText type="small" themeColor="textSecondary">
-                  El rol de administrador permite crear servicios.
+                  El rol de administrador permite crear servicios
                 </ThemedText>
               </View>
 

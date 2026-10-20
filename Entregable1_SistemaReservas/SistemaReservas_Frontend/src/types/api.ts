@@ -12,7 +12,6 @@ export type Servicio = {
   nombre: string;
   descripcion: string;
   duracion: number;
-  /** Prisma serializa Decimal como string en JSON. */
   precio: string;
 };
 
