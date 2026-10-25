@@ -36,6 +36,19 @@ export const soloAdmin = (req, res, next) => {
   next();
 };
 
+export const soloCliente = (req, res, next) => {
+  if (!req.usuario) {
+    return res.status(401).json({ error: "Usuario no autenticado" });
+  }
+
+  if (req.usuario.rol !== Rol.CLIENTE) {
+    return res.status(403).json({
+      error: "Acceso denegado: esta ruta es para clientes",
+    });
+  }
+  next();
+};
+
 export const validarNombre = (req, res, next) => {
   const { nombre } = req.body;
   if (!nombre || typeof nombre !== "string" || nombre.trim() === "") {

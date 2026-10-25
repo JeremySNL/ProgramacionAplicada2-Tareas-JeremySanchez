@@ -32,11 +32,12 @@ model Servicio {
 model Reserva {
   id         Int           @id @default(autoincrement())
   fecha      DateTime
+  hora       DateTime
   estado     EstadoReserva @default(PENDIENTE)
-  usuario    Usuario       @relation(fields: [idUsuario], references: [id])
-  servicio   Servicio      @relation(fields: [idServicio], references: [id])
-  idUsuario  Int           @unique
-  idServicio Int           @unique
+  usuarioId  Int
+  servicioId Int
+  usuario    Usuario       @relation(fields: [usuarioId], references: [id])
+  servicio   Servicio      @relation(fields: [servicioId], references: [id])
 }
 
 enum Rol {

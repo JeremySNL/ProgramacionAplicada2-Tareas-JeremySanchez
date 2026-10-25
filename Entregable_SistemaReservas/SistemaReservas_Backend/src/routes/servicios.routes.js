@@ -10,10 +10,10 @@ import {
   requerirCamposServicio,
   validarDescripcion,
   validarDuracion,
-  validarId,
   validarNombre,
   validarPrecio,
-} from "./../middlewares/validaciones.middleware.js";
+} from "../middlewares/validaciones.servicios.middleware.js";
+import { validarId } from "../middlewares/validaciones.middleware.js";
 
 const router = Router();
 
