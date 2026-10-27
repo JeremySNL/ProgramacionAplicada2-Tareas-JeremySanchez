@@ -170,8 +170,7 @@ export default function ReservasScreen() {
         }
         renderItem={({ item }) => {
           const puedeCancelar =
-            (session.user.rol === 'CLIENTE' || isAdmin) &&
-            item.estado === 'PENDIENTE';
+            session.user.rol === 'CLIENTE' && item.estado === 'PENDIENTE';
           const puedeCompletar = isAdmin && item.estado === 'PENDIENTE';
           const colorEstado = coloresEstado[item.estado];
 
