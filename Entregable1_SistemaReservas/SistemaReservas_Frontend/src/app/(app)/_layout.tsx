@@ -38,10 +38,27 @@ export default function AppLayout() {
         }}
       />
 
+      <Stack.Screen
+        name="servicios/[id]"
+        options={{ title: 'Servicio' }}
+      />
+
+      <Stack.Screen
+        name="reservas/index"
+        options={{ title: 'Reservas' }}
+      />
+
       <Stack.Protected guard={isAdmin}>
         <Stack.Screen
           name="crear-servicio"
           options={{ title: 'Nuevo servicio' }}
+        />
+      </Stack.Protected>
+
+      <Stack.Protected guard={session?.user.rol === 'CLIENTE'}>
+        <Stack.Screen
+          name="reservas/nueva"
+          options={{ title: 'Nueva reserva' }}
         />
       </Stack.Protected>
     </Stack>

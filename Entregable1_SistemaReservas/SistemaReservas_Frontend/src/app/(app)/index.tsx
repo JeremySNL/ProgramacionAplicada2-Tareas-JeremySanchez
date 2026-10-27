@@ -1,6 +1,12 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import { ApiError } from '@/api/client';
 import { listarServicios } from '@/api/servicios';
@@ -117,6 +123,12 @@ export default function ServiciosScreen() {
               </View>
             </View>
 
+            <Button
+              title={isAdmin ? 'Ver reservas' : 'Mis reservas'}
+              variant="secondary"
+              onPress={() => router.push('/reservas')}
+            />
+
             {isAdmin ? (
               <Button
                 title="Nuevo servicio"
@@ -150,30 +162,39 @@ export default function ServiciosScreen() {
           </Card>
         }
         renderItem={({ item }) => (
-          <Card>
-            <View style={styles.itemRow}>
-              <ThemedText
-                type="smallBold"
-                numberOfLines={1}
-                style={styles.itemName}>
-                {item.nombre}
-              </ThemedText>
-              <ThemedText type="smallBold" themeColor="primary">
-                ${Number(item.precio).toFixed(2)}
-              </ThemedText>
-            </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() =>
+              router.push({
+                pathname: '/servicios/[id]',
+                params: { id: String(item.id) },
+              })
+            }>
+            <Card>
+              <View style={styles.itemRow}>
+                <ThemedText
+                  type="smallBold"
+                  numberOfLines={1}
+                  style={styles.itemName}>
+                  {item.nombre}
+                </ThemedText>
+                <ThemedText type="smallBold" themeColor="primary">
+                  ${Number(item.precio).toFixed(2)}
+                </ThemedText>
+              </View>
 
-            <ThemedText type="small" themeColor="textSecondary">
-              {item.descripcion}
-            </ThemedText>
-
-            <View style={styles.durationRow}>
               <ThemedText type="small" themeColor="textSecondary">
-                Duración:
+                {item.descripcion}
               </ThemedText>
-              <ThemedText type="small">{item.duracion} min</ThemedText>
-            </View>
-          </Card>
+
+              <View style={styles.durationRow}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Duración:
+                </ThemedText>
+                <ThemedText type="small">{item.duracion} min</ThemedText>
+              </View>
+            </Card>
+          </Pressable>
         )}
       />
     </ThemedView>

@@ -21,3 +21,22 @@ export type ServicioInput = {
   duracion: number;
   precio: number;
 };
+
+export type EstadoReserva = 'PENDIENTE' | 'COMPLETADA' | 'CANCELADA';
+
+export type Reserva = {
+  id: number;
+  fecha: string;
+  hora: string;
+  estado: EstadoReserva;
+  usuarioId: number;
+  servicioId: number;
+  servicio: Servicio;
+  usuario?: Usuario;
+};
+
+export type ReservaInput = {
+  servicioId: number;
+  fecha: string;
+  hora: string;
+};
