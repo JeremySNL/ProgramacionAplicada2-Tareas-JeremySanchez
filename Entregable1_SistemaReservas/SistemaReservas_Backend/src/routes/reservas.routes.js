@@ -11,8 +11,7 @@ import { validarId } from "../middlewares/validaciones.middleware.js";
 import {
   requerirCamposReserva,
   validarEstadoReserva,
-  validarFechaReserva,
-  validarHoraReserva,
+  validarFechaHoraReserva,
   validarServicioId,
 } from "../middlewares/validaciones.reservas.middleware.js";
 
@@ -23,8 +22,7 @@ router.post(
   soloCliente,
   requerirCamposReserva,
   validarServicioId,
-  validarFechaReserva,
-  validarHoraReserva,
+  validarFechaHoraReserva,
   crearReserva,
 );
 router.get("/mis-reservas", soloCliente, obtenerMisReservas);

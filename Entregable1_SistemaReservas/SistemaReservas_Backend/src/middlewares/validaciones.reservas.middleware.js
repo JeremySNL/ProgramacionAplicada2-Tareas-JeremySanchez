@@ -22,28 +22,16 @@ export const validarServicioId = (req, res, next) => {
   next();
 };
 
-export const validarFechaReserva = (req, res, next) => {
+export const validarFechaHoraReserva = (req, res, next) => {
   const fecha = req.body?.fecha;
-  const fechaValida =
-    typeof fecha === "string" &&
-    /^\d{4}-\d{2}-\d{2}$/.test(fecha) &&
-    !Number.isNaN(new Date(`${fecha}T00:00:00.000Z`).getTime()) &&
-    new Date(`${fecha}T00:00:00.000Z`).toISOString().slice(0, 10) === fecha;
-
-  if (!fechaValida) {
-    return res.status(400).json({
-      error: "La fecha debe tener el formato YYYY-MM-DD y ser válida",
-    });
+  if (!fecha) {
+    return res.status(400).json({ error: "La fecha es requerida" });
   }
-  next();
-};
 
-export const validarHoraReserva = (req, res, next) => {
-  const hora = req.body?.hora;
-
-  if (typeof hora !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(hora)) {
+  const fechaConvertida = new Date(fechaHora);
+  if (isNaN(fechaConvertida.getTime())) {
     return res.status(400).json({
-      error: "La hora debe tener el formato HH:mm",
+      error: "Formato de fecha invalido",
     });
   }
   next();

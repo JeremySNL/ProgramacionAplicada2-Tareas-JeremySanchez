@@ -37,8 +37,7 @@ export const crearReserva = async (req, res) => {
   try {
     const { servicioId, fecha, hora } = req.body;
     const idServicio = parseInt(servicioId);
-    const fechaReserva = new Date(fecha);
-    const horaReserva = new Date(`1970-01-01T${hora}:00.000Z`);
+    const fechaHoraReserva = new Date(fecha);
 
     const servicio = await prisma.servicio.findUnique({
       where: { id: idServicio },
@@ -50,9 +49,8 @@ export const crearReserva = async (req, res) => {
 
     const reserva = await prisma.reserva.create({
       data: {
-        fecha: fechaReserva,
-        hora: horaReserva,
-        usuarioId: parseInt(req.usuario.id, 10),
+        fechaHora: fechaHoraReserva,
+        usuarioId: parseInt(req.usuario.id),
         servicioId: idServicio,
       },
       include: { servicio: true },
@@ -65,7 +63,7 @@ export const crearReserva = async (req, res) => {
 };
 
 export const cambiarEstadoReserva = async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id);
   const { estado } = req.body;
 
   try {
@@ -86,13 +84,13 @@ export const cambiarEstadoReserva = async (req, res) => {
 };
 
 export const cancelarReserva = async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id);
 
   try {
     const resultado = await prisma.reserva.updateMany({
       where: {
         id,
-        usuarioId: parseInt(req.usuario.id, 10),
+        usuarioId: parseInt(req.usuario.id),
         estado: EstadoReserva.PENDIENTE,
       },
       data: { estado: EstadoReserva.CANCELADA },
