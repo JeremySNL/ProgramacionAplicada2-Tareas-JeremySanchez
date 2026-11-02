@@ -35,30 +35,75 @@ export const obtenerMisReservas = async (req, res) => {
 
 export const crearReserva = async (req, res) => {
   try {
-    const { servicioId, fecha, hora } = req.body;
+    const { servicioId, fecha } = req.body;
+
     const idServicio = parseInt(servicioId);
-    const fechaHoraReserva = new Date(fecha);
+    const usuarioId = parseInt(req.usuario.id);
+    const reservaFechaHoraInicio = new Date(fecha);
 
     const servicio = await prisma.servicio.findUnique({
       where: { id: idServicio },
     });
 
     if (!servicio) {
-      return res.status(404).json({ error: "No existe el servicio indicado" });
+      return res.status(404).json({
+        error: "No existe el servicio indicado",
+      });
+    }
+
+    const reservas = await prisma.reserva.findMany({
+      where: {
+        usuarioId,
+        servicioId: idServicio,
+        estado: EstadoReserva.PENDIENTE,
+      },
+      include: {
+        servicio: true,
+      },
+    });
+
+    const reservaFechaHoraFinal =
+      reservaFechaHoraInicio.getTime() +
+      servicio.duracion * 60000;
+
+    const hayConflicto = reservas.some((reserva) => {
+      const otraReservaFechaInicio = reserva.fechaHora;
+
+      const otraReservaFechaFinal =
+        otraReservaFechaInicio.getTime() +
+        reserva.servicio.duracion * 60000;
+
+      return (
+        reservaFechaHoraInicio < otraReservaFechaFinal &&
+        reservaFechaHoraFinal > otraReservaFechaInicio
+      );
+    });
+
+    if (hayConflicto) {
+      return res.status(409).json({
+        error: "Hay conflicto de horario con otra reserva",
+      });
     }
 
     const reserva = await prisma.reserva.create({
       data: {
-        fechaHora: fechaHoraReserva,
-        usuarioId: parseInt(req.usuario.id),
+        fechaHora: reservaFechaHoraInicio,
+        usuarioId,
         servicioId: idServicio,
       },
-      include: { servicio: true },
+      include: {
+        servicio: true,
+      },
     });
-    res.status(201).json(reserva);
+
+    return res.status(201).json(reserva);
+
   } catch (error) {
-    console.error("Error creando la reserva: ", error);
-    res.status(500).json({ error: "Error creando la reserva" });
+    console.error("Error creando la reserva:", error);
+
+    return res.status(500).json({
+      error: "Error creando la reserva",
+    });
   }
 };
 
