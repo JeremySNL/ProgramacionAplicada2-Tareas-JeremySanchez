@@ -35,11 +35,17 @@ export const obtenerMisReservas = async (req, res) => {
 
 export const crearReserva = async (req, res) => {
   try {
-    const { servicioId, fecha } = req.body;
+    const { servicioId, fechaHora } = req.body;
 
     const idServicio = parseInt(servicioId);
     const usuarioId = parseInt(req.usuario.id);
-    const reservaFechaHoraInicio = new Date(fecha);
+    const reservaFechaHoraInicio = new Date(fechaHora);
+
+    if (reservaFechaHoraInicio <= new Date()) {
+      return res.status(400).json({
+        error: "La fecha debe ser futura",
+      });
+    }
 
     const servicio = await prisma.servicio.findUnique({
       where: { id: idServicio },
@@ -63,15 +69,13 @@ export const crearReserva = async (req, res) => {
     });
 
     const reservaFechaHoraFinal =
-      reservaFechaHoraInicio.getTime() +
-      servicio.duracion * 60000;
+      reservaFechaHoraInicio.getTime() + servicio.duracion * 60000;
 
     const hayConflicto = reservas.some((reserva) => {
       const otraReservaFechaInicio = reserva.fechaHora;
 
       const otraReservaFechaFinal =
-        otraReservaFechaInicio.getTime() +
-        reserva.servicio.duracion * 60000;
+        otraReservaFechaInicio.getTime() + reserva.servicio.duracion * 60000;
 
       return (
         reservaFechaHoraInicio < otraReservaFechaFinal &&
@@ -97,7 +101,6 @@ export const crearReserva = async (req, res) => {
     });
 
     return res.status(201).json(reserva);
-
   } catch (error) {
     console.error("Error creando la reserva:", error);
 

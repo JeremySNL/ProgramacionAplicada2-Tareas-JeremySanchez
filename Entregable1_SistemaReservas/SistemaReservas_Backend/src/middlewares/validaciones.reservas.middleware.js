@@ -1,9 +1,9 @@
 import { EstadoReserva } from "@prisma/client";
 
 export const requerirCamposReserva = (req, res, next) => {
-  const { servicioId, fecha, hora } = req.body || {};
+  const { servicioId, fechaHora } = req.body || {};
 
-  if (servicioId === undefined || fecha === undefined || hora === undefined) {
+  if (servicioId === undefined || fechaHora === undefined) {
     return res.status(400).json({
       error: "Los campos servicioId, fecha y hora son obligatorios",
     });
@@ -23,8 +23,8 @@ export const validarServicioId = (req, res, next) => {
 };
 
 export const validarFechaHoraReserva = (req, res, next) => {
-  const fecha = req.body?.fecha;
-  if (!fecha) {
+  const fechaHora = req.body?.fechaHora;
+  if (!fechaHora) {
     return res.status(400).json({ error: "La fecha es requerida" });
   }
 

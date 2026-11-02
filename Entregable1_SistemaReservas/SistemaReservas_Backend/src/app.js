@@ -3,6 +3,7 @@ import loggerMiddleware from "./middlewares/logger.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import serviciosRoutes from "./routes/servicios.routes.js";
 import reservasRoutes from "./routes/reservas.routes.js";
+import usuariosRoutes from "./routes/usuarios.routes.js"
 import { verificarToken } from "./middlewares/auth.middleware.js";
 import CORS from "cors";
 
@@ -16,5 +17,6 @@ app.use(loggerMiddleware);
 app.use("/auth", authRoutes);
 app.use("/servicios", verificarToken, serviciosRoutes);
 app.use("/reservas", verificarToken, reservasRoutes);
+app.use("/usuarios", verificarToken, usuariosRoutes)
 
 export default app;
