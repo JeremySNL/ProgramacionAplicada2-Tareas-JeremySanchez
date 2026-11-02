@@ -31,8 +31,7 @@ model Servicio {
 
 model Reserva {
   id         Int           @id @default(autoincrement())
-  fecha      DateTime
-  hora       DateTime
+  fechaHora      DateTime
   estado     EstadoReserva @default(PENDIENTE)
   usuarioId  Int
   servicioId Int
