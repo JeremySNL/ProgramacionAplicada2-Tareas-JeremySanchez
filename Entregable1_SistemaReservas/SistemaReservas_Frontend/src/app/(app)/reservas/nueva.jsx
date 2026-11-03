@@ -1,21 +1,18 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ApiError } from '@/services/api';
-import { crearReserva } from '@/features/reservas/api';
-import { useSession } from '@/auth/session';
-import SelectorFechaHora from '@/features/reservas/selector-fecha-hora';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Button, Card, ErrorBanner } from '@/components/ui';
-import { Spacing } from '@/constants/theme';
-import {
-  esFechaPasada,
-  esHorarioPasadoHoy,
-  hoyISO,
-} from '@/lib/fechas';
+import { ApiError } from "@/services/api";
+import { crearReserva } from "@/features/reservas/api";
+import { programarRecordatorio } from "@/features/reservas/notificaciones";
+import { useSession } from "@/auth/session";
+import SelectorFechaHora from "@/features/reservas/selector-fecha-hora";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Button, Card, ErrorBanner } from "@/components/ui";
+import { Spacing } from "@/constants/theme";
+import { esFechaPasada, esHorarioPasadoHoy, hoyISO, horaActualLocal, OFFSET_NEGOCIO } from "@/lib/fechas";
 
 export default function NuevaReservaScreen() {
   const { servicioId, nombre } = useLocalSearchParams();
@@ -28,26 +25,26 @@ export default function NuevaReservaScreen() {
   const [error, setError] = useState(null);
 
   const idServicio = Number(servicioId);
-  const nombreServicio = nombre ?? 'Servicio';
+  const nombreServicio = nombre ?? "Servicio";
 
   function validar() {
     if (Number.isNaN(idServicio) || idServicio <= 0) {
-      setError('El servicio no es válido.');
+      setError("El servicio no es válido.");
       return false;
     }
 
     if (esFechaPasada(fechaSeleccionada)) {
-      setError('No se puede reservar una fecha pasada.');
+      setError("No se puede reservar una fecha pasada.");
       return false;
     }
 
     if (!horaSeleccionada) {
-      setError('Seleccioná un horario.');
+      setError("Seleccioná un horario.");
       return false;
     }
 
     if (esHorarioPasadoHoy(fechaSeleccionada, horaSeleccionada)) {
-      setError('Ese horario ya pasó.');
+      setError("Ese horario ya pasó.");
       return false;
     }
 
@@ -63,20 +60,21 @@ export default function NuevaReservaScreen() {
     setLoading(true);
 
     try {
-      await crearReserva(session.token, {
+      const reserva = await crearReserva(session.token, {
         servicioId: idServicio,
-        fecha: fechaSeleccionada,
-        hora: horaSeleccionada,
+        fechaHora: `${fechaSeleccionada}T${horaSeleccionada}:00${OFFSET_NEGOCIO}`,
       });
 
-      router.replace('/reservas');
-    } catch (caught) {
-      if (caught instanceof ApiError && caught.status === 401) return;
+      await programarRecordatorio(reserva);
+
+      router.replace("/reservas");
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) return;
 
       setError(
-        caught instanceof ApiError
-          ? caught.message
-          : 'No se pudo crear la reserva.',
+        error instanceof ApiError
+          ? error.message
+          : "No se pudo crear la reserva.",
       );
     } finally {
       setLoading(false);
@@ -87,10 +85,11 @@ export default function NuevaReservaScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      <SafeAreaView edges={['bottom']} style={styles.safeArea}>
+      <SafeAreaView edges={["bottom"]} style={styles.safeArea}>
         <ScrollView
           contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled">
+          keyboardShouldPersistTaps="handled"
+        >
           <Card style={styles.info}>
             <ThemedText type="small" themeColor="textSecondary">
               Reservando
@@ -115,6 +114,8 @@ export default function NuevaReservaScreen() {
             loading={loading}
             style={styles.boton}
           />
+
+          <ThemedText>{fechaSeleccionada + " " + horaSeleccionada + " - " + hoyISO() + " - " + horaActualLocal()}</ThemedText>
         </ScrollView>
       </SafeAreaView>
     </ThemedView>

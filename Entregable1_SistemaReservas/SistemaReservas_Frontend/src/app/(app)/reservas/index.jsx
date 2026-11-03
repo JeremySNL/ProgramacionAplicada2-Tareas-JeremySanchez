@@ -9,6 +9,7 @@ import {
   listarMisReservas,
   listarReservas,
 } from '@/features/reservas/api';
+import { cancelarRecordatorio } from '@/features/reservas/notificaciones';
 import { useSession } from '@/auth/session';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -109,6 +110,7 @@ export default function ReservasScreen() {
 
     try {
       await cancelarReserva(session.token, id);
+      await cancelarRecordatorio(id);
       await cargar('silencioso');
     } catch (caught) {
       setError(
@@ -127,6 +129,9 @@ export default function ReservasScreen() {
 
   return (
     <ThemedView style={styles.screen}>
+      <ThemedText type='small' themeColor={"primary"}>
+        {new Date().toISOString()}
+      </ThemedText>
       <FlatList
         data={reservas}
         keyExtractor={(item) => String(item.id)}
@@ -205,7 +210,7 @@ export default function ReservasScreen() {
                   Fecha:
                 </ThemedText>
                 <ThemedText type="smallBold">
-                  {formatearFecha(item.fecha)}
+                  {formatearFecha(item.fechaHora)}
                 </ThemedText>
               </View>
 
@@ -214,7 +219,7 @@ export default function ReservasScreen() {
                   Hora:
                 </ThemedText>
                 <ThemedText type="smallBold">
-                  {formatearHora(item.hora)}
+                  {formatearHora(item.fechaHora)}
                 </ThemedText>
               </View>
 

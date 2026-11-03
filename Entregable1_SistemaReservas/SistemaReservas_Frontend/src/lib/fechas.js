@@ -1,26 +1,45 @@
 const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
+// Zona horaria del negocio (la misma que usa el backend): UTC-4, sin horario
+// de verano. Todo se muestra y se envía en esta zona, sin depender de la del
+// dispositivo.
+export const OFFSET_NEGOCIO = '-04:00';
+const OFFSET_NEGOCIO_MS = -4 * 60 * 60 * 1000;
+
 function pad(n) {
   return n.toString().padStart(2, '0');
 }
 
+// Date cuyos getters UTC devuelven la fecha y hora del negocio.
+function enZonaNegocio(instante) {
+  return new Date(new Date(instante).getTime() + OFFSET_NEGOCIO_MS);
+}
+
 export function hoyISO() {
-  const ahora = new Date();
-  return `${ahora.getFullYear()}-${pad(ahora.getMonth() + 1)}-${pad(ahora.getDate())}`;
+  const ahora = enZonaNegocio(Date.now());
+  return `${ahora.getUTCFullYear()}-${pad(ahora.getUTCMonth() + 1)}-${pad(ahora.getUTCDate())}`;
 }
 
 export function horaActualLocal() {
-  const ahora = new Date();
-  return `${pad(ahora.getHours())}:${pad(ahora.getMinutes())}`;
+  const ahora = enZonaNegocio(Date.now());
+  return `${pad(ahora.getUTCHours())}:${pad(ahora.getUTCMinutes())}`;
 }
 
+// Acepta 'YYYY-MM-DD' (fecha elegida en el selector, ya en zona del negocio) o
+// un instante ISO con hora (viene del backend) que se convierte a esa zona.
 export function formatearFecha(isoString) {
-  const [año, mes, día] = isoString.slice(0, 10).split('-');
-  return `${día}/${mes}/${año}`;
+  if (isoString.length === 10) {
+    const [año, mes, día] = isoString.split('-');
+    return `${día}/${mes}/${año}`;
+  }
+
+  const fecha = enZonaNegocio(isoString);
+  return `${pad(fecha.getUTCDate())}/${pad(fecha.getUTCMonth() + 1)}/${fecha.getUTCFullYear()}`;
 }
 
 export function formatearHora(isoString) {
-  return isoString.slice(11, 16);
+  const fecha = enZonaNegocio(isoString);
+  return `${pad(fecha.getUTCHours())}:${pad(fecha.getUTCMinutes())}`;
 }
 
 export function esFechaPasada(fechaISO) {

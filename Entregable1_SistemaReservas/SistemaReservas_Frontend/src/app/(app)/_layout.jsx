@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 
 import { useSession } from '@/auth/session';
@@ -6,7 +6,8 @@ import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function AppLayout() {
-  const { session, signOut } = useSession();
+  const { session } = useSession();
+  const router = useRouter();
   const theme = useTheme();
   const isAdmin = session?.user.rol === 'ADMIN';
 
@@ -27,16 +28,16 @@ export default function AppLayout() {
             <Pressable
               accessibilityRole="button"
               hitSlop={12}
-              onPress={() => {
-                void signOut();
-              }}>
+              onPress={() => router.push('/perfil')}>
               <ThemedText type="smallBold" themeColor="primary">
-                Salir
+                Perfil
               </ThemedText>
             </Pressable>
           ),
         }}
       />
+
+      <Stack.Screen name="perfil" options={{ title: 'Perfil' }} />
 
       <Stack.Screen
         name="servicios/[id]"

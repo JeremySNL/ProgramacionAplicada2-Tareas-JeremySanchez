@@ -1,5 +1,6 @@
 import prisma from "./../db.js";
 import { EstadoReserva } from "@prisma/client";
+import { parsearFechaHora } from "../utils/fecha.js";
 
 export const obtenerReservas = async (req, res) => {
   try {
@@ -39,7 +40,7 @@ export const crearReserva = async (req, res) => {
 
     const idServicio = parseInt(servicioId);
     const usuarioId = parseInt(req.usuario.id);
-    const reservaFechaHoraInicio = new Date(fechaHora);
+    const reservaFechaHoraInicio = parsearFechaHora(fechaHora);
 
     if (reservaFechaHoraInicio <= new Date()) {
       return res.status(400).json({
