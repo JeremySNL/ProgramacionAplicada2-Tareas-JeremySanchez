@@ -1,4 +1,5 @@
 import { EstadoReserva } from "@prisma/client";
+import { parsearFechaHora } from "../utils/fecha.js";
 
 export const requerirCamposReserva = (req, res, next) => {
   const { servicioId, fechaHora } = req.body || {};
@@ -28,8 +29,7 @@ export const validarFechaHoraReserva = (req, res, next) => {
     return res.status(400).json({ error: "La fecha es requerida" });
   }
 
-  const fechaConvertida = new Date(fechaHora);
-  if (isNaN(fechaConvertida.getTime())) {
+  if (!parsearFechaHora(fechaHora)) {
     return res.status(400).json({
       error: "Formato de fecha invalido",
     });
