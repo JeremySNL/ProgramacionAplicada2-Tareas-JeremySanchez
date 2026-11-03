@@ -86,3 +86,36 @@ export async function cancelarRecordatorio(reservaId) {
     // Si no existía o falla, la cancelación de la reserva sigue válida.
   }
 }
+
+// TEMPORAL: sirve para comprobar que el teléfono muestra notificaciones.
+// Devuelve un texto con el estado del permiso para mostrarlo en pantalla.
+export async function enviarNotificacionPrueba() {
+  if (!soportado) return 'No disponible en web.';
+
+  try {
+    let permisos = await Notifications.getPermissionsAsync();
+    if (!permisos.granted && permisos.canAskAgain) {
+      permisos = await Notifications.requestPermissionsAsync();
+    }
+
+    if (!permisos.granted) {
+      return `Permiso denegado (canAskAgain: ${permisos.canAskAgain}). Actívalo en los ajustes del teléfono.`;
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Prueba de notificación',
+        body: 'Si ves esto, las notificaciones funcionan.',
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 5,
+        channelId: CANAL_ID,
+      },
+    });
+
+    return 'Permiso concedido. La notificación llegará en 5 segundos.';
+  } catch (caught) {
+    return `Error: ${caught.message}`;
+  }
+}

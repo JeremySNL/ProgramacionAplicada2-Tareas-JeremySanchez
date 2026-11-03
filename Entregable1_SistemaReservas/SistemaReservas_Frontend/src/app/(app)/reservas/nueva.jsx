@@ -1,11 +1,14 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ApiError } from "@/services/api";
 import { crearReserva } from "@/features/reservas/api";
-import { programarRecordatorio } from "@/features/reservas/notificaciones";
+import {
+  enviarNotificacionPrueba,
+  programarRecordatorio,
+} from "@/features/reservas/notificaciones";
 import { useSession } from "@/auth/session";
 import SelectorFechaHora from "@/features/reservas/selector-fecha-hora";
 import { ThemedText } from "@/components/themed-text";
@@ -66,6 +69,8 @@ export default function NuevaReservaScreen() {
       });
 
       await programarRecordatorio(reserva);
+      // TEMPORAL: prueba de notificación (quitar cuando funcione).
+      Alert.alert("Prueba de notificación", await enviarNotificacionPrueba());
 
       router.replace("/reservas");
     } catch (error) {
@@ -114,8 +119,6 @@ export default function NuevaReservaScreen() {
             loading={loading}
             style={styles.boton}
           />
-
-          <ThemedText>{fechaSeleccionada + " " + horaSeleccionada + " - " + hoyISO() + " - " + horaActualLocal()}</ThemedText>
         </ScrollView>
       </SafeAreaView>
     </ThemedView>

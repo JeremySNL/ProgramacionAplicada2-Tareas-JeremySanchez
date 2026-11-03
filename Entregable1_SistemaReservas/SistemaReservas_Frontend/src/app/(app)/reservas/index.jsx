@@ -129,9 +129,6 @@ export default function ReservasScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      <ThemedText type='small' themeColor={"primary"}>
-        {new Date().toISOString()}
-      </ThemedText>
       <FlatList
         data={reservas}
         keyExtractor={(item) => String(item.id)}
