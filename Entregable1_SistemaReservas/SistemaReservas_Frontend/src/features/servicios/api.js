@@ -1,32 +1,27 @@
-import { api } from './client';
-import type { Servicio, ServicioInput } from '@/types/api';
+import { api } from '@/services/api';
 
-export function listarServicios(token: string) {
-  return api<Servicio[]>('/servicios', { token });
+export function listarServicios(token) {
+  return api('/servicios', { token });
 }
 
-export function crearServicio(token: string, data: ServicioInput) {
-  return api<Servicio>('/servicios', {
+export function crearServicio(token, data) {
+  return api('/servicios', {
     method: 'POST',
     body: data,
     token,
   });
 }
 
-export function editarServicio(
-  token: string,
-  id: number,
-  data: Partial<ServicioInput>,
-) {
-  return api<Servicio>(`/servicios/${id}`, {
+export function editarServicio(token, id, data) {
+  return api(`/servicios/${id}`, {
     method: 'PUT',
     body: data,
     token,
   });
 }
 
-export function eliminarServicio(token: string, id: number) {
-  return api<Servicio>(`/servicios/${id}`, {
+export function eliminarServicio(token, id) {
+  return api(`/servicios/${id}`, {
     method: 'DELETE',
     token,
   });

@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ApiError } from '@/api/client';
-import { crearReserva } from '@/api/reservas';
+import { ApiError } from '@/services/api';
+import { crearReserva } from '@/features/reservas/api';
 import { useSession } from '@/auth/session';
-import SelectorFechaHora from '@/components/reservas/selector-fecha-hora';
+import SelectorFechaHora from '@/features/reservas/selector-fecha-hora';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button, Card, ErrorBanner } from '@/components/ui';
@@ -18,22 +18,19 @@ import {
 } from '@/lib/fechas';
 
 export default function NuevaReservaScreen() {
-  const { servicioId, nombre } = useLocalSearchParams<{
-    servicioId: string;
-    nombre?: string;
-  }>();
+  const { servicioId, nombre } = useLocalSearchParams();
   const router = useRouter();
   const { session } = useSession();
 
-  const [fechaSeleccionada, setFechaSeleccionada] = useState<string>(hoyISO());
-  const [horaSeleccionada, setHoraSeleccionada] = useState<string | null>(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(hoyISO());
+  const [horaSeleccionada, setHoraSeleccionada] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   const idServicio = Number(servicioId);
   const nombreServicio = nombre ?? 'Servicio';
 
-  function validar(): boolean {
+  function validar() {
     if (Number.isNaN(idServicio) || idServicio <= 0) {
       setError('El servicio no es válido.');
       return false;
@@ -69,7 +66,7 @@ export default function NuevaReservaScreen() {
       await crearReserva(session.token, {
         servicioId: idServicio,
         fecha: fechaSeleccionada,
-        hora: horaSeleccionada!,
+        hora: horaSeleccionada,
       });
 
       router.replace('/reservas');

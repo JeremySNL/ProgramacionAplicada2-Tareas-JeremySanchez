@@ -1,36 +1,31 @@
-import { api } from './client';
-import type { EstadoReserva, Reserva, ReservaInput } from '@/types/api';
+import { api } from '@/services/api';
 
-export function crearReserva(token: string, data: ReservaInput) {
-  return api<Reserva>('/reservas', {
+export function crearReserva(token, data) {
+  return api('/reservas', {
     method: 'POST',
     body: data,
     token,
   });
 }
 
-export function listarMisReservas(token: string) {
-  return api<Reserva[]>('/reservas/mis-reservas', { token });
+export function listarMisReservas(token) {
+  return api('/reservas/mis-reservas', { token });
 }
 
-export function listarReservas(token: string) {
-  return api<Reserva[]>('/reservas', { token });
+export function listarReservas(token) {
+  return api('/reservas', { token });
 }
 
-export function cambiarEstadoReserva(
-  token: string,
-  id: number,
-  estado: EstadoReserva,
-) {
-  return api<Reserva>(`/reservas/${id}/estado`, {
+export function cambiarEstadoReserva(token, id, estado) {
+  return api(`/reservas/${id}/estado`, {
     method: 'PUT',
     body: { estado },
     token,
   });
 }
 
-export function cancelarReserva(token: string, id: number) {
-  return api<Reserva>(`/reservas/${id}`, {
+export function cancelarReserva(token, id) {
+  return api(`/reservas/${id}`, {
     method: 'DELETE',
     token,
   });

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TOKEN_KEY = 'token';
 
-export function guardarToken(token: string) {
+export function guardarToken(token) {
   return AsyncStorage.setItem(TOKEN_KEY, token);
 }
 

@@ -7,30 +7,21 @@ import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatearFecha } from '@/lib/fechas';
 
-type SelectorFechaHoraProps = {
-  fecha: string;
-  hora: string | null;
-  onFechaChange: (fecha: string) => void;
-  onHoraChange: (hora: string) => void;
-};
-
-type PickerActivo = 'fecha' | 'hora' | null;
-
-function desdeFechaLocal(fecha: string, hora = '12:00'): Date {
+function desdeFechaLocal(fecha, hora = '12:00') {
   return new Date(`${fecha}T${hora}:00`);
 }
 
-function fechaLocal(date: Date): string {
-  const pad = (value: number) => value.toString().padStart(2, '0');
+function fechaLocal(date) {
+  const pad = (value) => value.toString().padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-function horaLocal(date: Date): string {
-  const pad = (value: number) => value.toString().padStart(2, '0');
+function horaLocal(date) {
+  const pad = (value) => value.toString().padStart(2, '0');
   return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-function hoyLocal(): Date {
+function hoyLocal() {
   const today = new Date();
   return new Date(today.getFullYear(), today.getMonth(), today.getDate());
 }
@@ -40,16 +31,16 @@ export default function SelectorFechaHora({
   hora,
   onFechaChange,
   onHoraChange,
-}: SelectorFechaHoraProps) {
+}) {
   const theme = useTheme();
-  const [pickerActivo, setPickerActivo] = useState<PickerActivo>(null);
+  const [pickerActivo, setPickerActivo] = useState(null);
 
   const value =
     pickerActivo === 'hora'
       ? desdeFechaLocal(fecha, hora ?? '09:00')
       : desdeFechaLocal(fecha);
 
-  function onValueChange(_event: unknown, selectedDate?: Date) {
+  function onValueChange(_event, selectedDate) {
     setPickerActivo(null);
     if (!selectedDate) return;
 

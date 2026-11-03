@@ -8,33 +8,30 @@ import {
   View,
 } from 'react-native';
 
-import { ApiError } from '@/api/client';
-import { listarServicios } from '@/api/servicios';
+import { ApiError } from '@/services/api';
+import { listarServicios } from '@/features/servicios/api';
 import { useSession } from '@/auth/session';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button, Card, ErrorBanner, LoadingView } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import type { Servicio } from '@/types/api';
-
-type ModoCarga = 'inicial' | 'refresh' | 'silencioso';
 
 export default function ServiciosScreen() {
   const { session } = useSession();
   const router = useRouter();
   const theme = useTheme();
 
-  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const primeraCarga = useRef(true);
 
   const isAdmin = session?.user.rol === 'ADMIN';
 
   const cargar = useCallback(
-    async (modo: ModoCarga) => {
+    async (modo) => {
       if (!session) return;
 
       if (modo === 'inicial') setLoading(true);
@@ -62,7 +59,7 @@ export default function ServiciosScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const modo: ModoCarga = primeraCarga.current ? 'inicial' : 'silencioso';
+      const modo = primeraCarga.current ? 'inicial' : 'silencioso';
       primeraCarga.current = false;
       void cargar(modo);
     }, [cargar]),

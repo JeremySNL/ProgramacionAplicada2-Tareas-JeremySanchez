@@ -4,26 +4,12 @@ import {
   StyleSheet,
   TextInput,
   View,
-  type StyleProp,
-  type TextInputProps,
-  type ViewStyle,
 } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-
-type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
-
-type ButtonProps = {
-  title: string;
-  onPress: () => void;
-  variant?: ButtonVariant;
-  loading?: boolean;
-  disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
-};
 
 export function Button({
   title,
@@ -32,11 +18,11 @@ export function Button({
   loading = false,
   disabled = false,
   style,
-}: ButtonProps) {
+}) {
   const theme = useTheme();
   const isDisabled = disabled || loading;
 
-  const palette: Record<ButtonVariant, { background: string; text: string; border: string }> = {
+  const palette = {
     primary: {
       background: theme.primary,
       text: theme.primaryText,
@@ -87,11 +73,7 @@ export function Button({
   );
 }
 
-type TextFieldProps = TextInputProps & {
-  label: string;
-};
-
-export function TextField({ label, style, ...rest }: TextFieldProps) {
+export function TextField({ label, style, ...rest }) {
   const theme = useTheme();
 
   return (
@@ -114,7 +96,7 @@ export function TextField({ label, style, ...rest }: TextFieldProps) {
   );
 }
 
-export function ErrorBanner({ message }: { message: string | null }) {
+export function ErrorBanner({ message }) {
   const theme = useTheme();
 
   if (!message) return null;
@@ -136,7 +118,7 @@ export function ErrorBanner({ message }: { message: string | null }) {
   );
 }
 
-export function LoadingView({ message }: { message?: string }) {
+export function LoadingView({ message }) {
   const theme = useTheme();
 
   return (
@@ -151,13 +133,7 @@ export function LoadingView({ message }: { message?: string }) {
   );
 }
 
-export function Card({
-  children,
-  style,
-}: {
-  children: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
-}) {
+export function Card({ children, style }) {
   return (
     <ThemedView type="backgroundElement" style={[styles.card, style]}>
       {children}

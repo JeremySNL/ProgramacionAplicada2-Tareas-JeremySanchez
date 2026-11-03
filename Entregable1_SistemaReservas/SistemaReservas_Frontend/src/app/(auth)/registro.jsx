@@ -10,16 +10,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ApiError } from '@/api/client';
+import { ApiError } from '@/services/api';
 import { useSession } from '@/auth/session';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button, Card, ErrorBanner, TextField } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import type { Rol } from '@/types/api';
 
-const ROLES: { value: Rol; label: string }[] = [
+const ROLES = [
   { value: 'CLIENTE', label: 'Cliente' },
   { value: 'ADMIN', label: 'Administrador' },
 ];
@@ -31,9 +30,9 @@ export default function RegistroScreen() {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rol, setRol] = useState<Rol>('CLIENTE');
+  const [rol, setRol] = useState('CLIENTE');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   async function onSubmit() {
     if (!nombre.trim()) {

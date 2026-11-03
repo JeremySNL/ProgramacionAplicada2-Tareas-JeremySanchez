@@ -1,20 +1,14 @@
-import { api } from './client';
-import type { Rol, Usuario } from '@/types/api';
+import { api } from '@/services/api';
 
-export function login(email: string, password: string) {
-  return api<{ token: string }>('/auth/login', {
+export function login(email, password) {
+  return api('/auth/login', {
     method: 'POST',
     body: { email, password },
   });
 }
 
-export function registrar(data: {
-  nombre: string;
-  email: string;
-  password: string;
-  rol: Rol;
-}) {
-  return api<Usuario>('/auth/registro', {
+export function registrar(data) {
+  return api('/auth/registro', {
     method: 'POST',
     body: data,
   });

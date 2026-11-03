@@ -28,8 +28,7 @@ function RootNavigator() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!session}>
-        <Stack.Screen name="login" />
-        <Stack.Screen name="registro" />
+        <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
       <Stack.Protected guard={!!session}>

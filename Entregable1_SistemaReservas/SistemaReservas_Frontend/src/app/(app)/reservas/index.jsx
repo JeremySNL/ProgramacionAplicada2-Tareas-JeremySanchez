@@ -2,13 +2,13 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Alert, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { ApiError } from '@/api/client';
+import { ApiError } from '@/services/api';
 import {
   cambiarEstadoReserva,
   cancelarReserva,
   listarMisReservas,
   listarReservas,
-} from '@/api/reservas';
+} from '@/features/reservas/api';
 import { useSession } from '@/auth/session';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -16,17 +16,14 @@ import { Button, Card, ErrorBanner, LoadingView } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatearFecha, formatearHora } from '@/lib/fechas';
-import type { EstadoReserva, Reserva } from '@/types/api';
 
-type ModoCarga = 'inicial' | 'refresh' | 'silencioso';
-
-const coloresEstado: Record<EstadoReserva, { bg: string; text: string }> = {
+const coloresEstado = {
   PENDIENTE: { bg: '#F59E0B', text: '#FFFFFF' },
   COMPLETADA: { bg: '#16A34A', text: '#FFFFFF' },
   CANCELADA: { bg: '#6B7280', text: '#FFFFFF' },
 };
 
-const etiquetasEstado: Record<EstadoReserva, string> = {
+const etiquetasEstado = {
   PENDIENTE: 'Pendiente',
   COMPLETADA: 'Completada',
   CANCELADA: 'Cancelada',
@@ -36,16 +33,16 @@ export default function ReservasScreen() {
   const { session } = useSession();
   const theme = useTheme();
 
-  const [reservas, setReservas] = useState<Reserva[]>([]);
+  const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const primeraCarga = useRef(true);
 
   const isAdmin = session?.user.rol === 'ADMIN';
 
   const cargar = useCallback(
-    async (modo: ModoCarga) => {
+    async (modo) => {
       if (!session) return;
 
       if (modo === 'inicial') setLoading(true);
@@ -75,13 +72,13 @@ export default function ReservasScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const modo: ModoCarga = primeraCarga.current ? 'inicial' : 'silencioso';
+      const modo = primeraCarga.current ? 'inicial' : 'silencioso';
       primeraCarga.current = false;
       void cargar(modo);
     }, [cargar]),
   );
 
-  async function cambiarEstado(id: number, estado: EstadoReserva) {
+  async function cambiarEstado(id, estado) {
     if (!session) return;
 
     try {
@@ -96,7 +93,7 @@ export default function ReservasScreen() {
     }
   }
 
-  function confirmarCancelar(id: number) {
+  function confirmarCancelar(id) {
     Alert.alert('Cancelar reserva', '¿Seguro que querés cancelar este turno?', [
       { text: 'No', style: 'cancel' },
       {
@@ -107,7 +104,7 @@ export default function ReservasScreen() {
     ]);
   }
 
-  async function ejecutarCancelar(id: number) {
+  async function ejecutarCancelar(id) {
     if (!session) return;
 
     try {
@@ -159,12 +156,12 @@ export default function ReservasScreen() {
         ListEmptyComponent={
           <Card style={styles.empty}>
             <ThemedText type="smallBold">
-              {isAdmin ? 'No hay reservas registradas' : 'No tenés reservas'}
+              {isAdmin ? 'No hay reservas registradas' : 'No tienes reservas'}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {isAdmin
                 ? 'Los clientes aún no solicitaron turnos.'
-                : 'Empezá reservando un servicio desde la pestaña de Servicios.'}
+                : 'Empieza reservando un servicio desde la pestaña de Servicios.'}
             </ThemedText>
           </Card>
         }

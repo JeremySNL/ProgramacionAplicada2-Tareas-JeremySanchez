@@ -3,23 +3,22 @@ import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ApiError } from '@/api/client';
-import { listarServicios } from '@/api/servicios';
+import { ApiError } from '@/services/api';
+import { listarServicios } from '@/features/servicios/api';
 import { useSession } from '@/auth/session';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button, Card, ErrorBanner, LoadingView } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
-import type { Servicio } from '@/types/api';
 
 export default function ServicioDetalleScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams();
   const router = useRouter();
   const { session } = useSession();
 
-  const [servicio, setServicio] = useState<Servicio | null>(null);
+  const [servicio, setServicio] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   const servicioId = Number(id);
   const isCliente = session?.user.rol === 'CLIENTE';

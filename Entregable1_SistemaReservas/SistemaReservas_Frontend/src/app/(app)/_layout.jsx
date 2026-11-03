@@ -20,7 +20,7 @@ export default function AppLayout() {
         contentStyle: { backgroundColor: theme.background },
       }}>
       <Stack.Screen
-        name="index"
+        name="servicios/index"
         options={{
           title: 'Servicios',
           headerRight: () => (

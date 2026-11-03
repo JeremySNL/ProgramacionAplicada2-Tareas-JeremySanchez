@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 
-const extra = Constants.expoConfig?.extra as { apiUrl?: string } | undefined;
+const extra = Constants.expoConfig?.extra;
 const API_URL = (
   extra?.apiUrl ??
   process.env.EXPO_PUBLIC_API_URL ??
@@ -8,31 +8,20 @@ const API_URL = (
 ).replace(/\/$/, '');
 
 export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-  ) {
+  constructor(message, status) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
   }
 }
 
-let onUnauthorized: (() => void) | null = null;
+let onUnauthorized = null;
 
-export function setUnauthorizedHandler(handler: (() => void) | null) {
+export function setUnauthorizedHandler(handler) {
   onUnauthorized = handler;
 }
 
-type RequestOptions = {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  body?: unknown;
-  token?: string | null;
-};
-
-export async function api<T>(
-  path: string,
-  { method = 'GET', body, token }: RequestOptions = {},
-): Promise<T> {
+export async function api(path, { method = 'GET', body, token } = {}) {
   if (!API_URL) {
     throw new ApiError(
       'La URL de la API no está configurada en app.config.js',
@@ -40,7 +29,7 @@ export async function api<T>(
     );
   }
 
-  let response: Response;
+  let response;
 
   try {
     response = await fetch(`${API_URL}${path}`, {
@@ -56,7 +45,7 @@ export async function api<T>(
   }
 
   const text = await response.text();
-  let data: unknown = null;
+  let data = null;
 
   if (text) {
     try {
@@ -71,12 +60,10 @@ export async function api<T>(
       onUnauthorized?.();
     }
 
-    const message =
-      (data as { error?: string } | null)?.error ??
-      `Error HTTP ${response.status}`;
+    const message = data?.error ?? `Error HTTP ${response.status}`;
 
     throw new ApiError(message, response.status);
   }
 
-  return data as T;
+  return data;
 }

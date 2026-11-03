@@ -1,39 +1,14 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type PropsWithChildren,
-} from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-import { login, registrar } from '@/api/auth';
-import { setUnauthorizedHandler } from '@/api/client';
-import type { Rol } from '@/types/api';
-import { decodificarToken, tokenVigente, type TokenPayload } from './jwt';
+import { login, registrar } from '@/auth/api';
+import { setUnauthorizedHandler } from '@/services/api';
+import { decodificarToken, tokenVigente } from './jwt';
 import { borrarToken, guardarToken, leerToken } from './storage';
 
-type Session = {
-  token: string;
-  user: TokenPayload;
-};
+const SessionContext = createContext(null);
 
-type SessionContextValue = {
-  session: Session | null;
-  isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (data: {
-    nombre: string;
-    email: string;
-    password: string;
-    rol: Rol;
-  }) => Promise<void>;
-  signOut: () => Promise<void>;
-};
-
-const SessionContext = createContext<SessionContextValue | null>(null);
-
-export function SessionProvider({ children }: PropsWithChildren) {
-  const [session, setSession] = useState<Session | null>(null);
+export function SessionProvider({ children }) {
+  const [session, setSession] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -89,7 +64,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     return () => clearTimeout(timeout);
   }, [session]);
 
-  async function signIn(email: string, password: string) {
+  async function signIn(email, password) {
     const { token } = await login(email, password);
     const user = decodificarToken(token);
 
@@ -101,12 +76,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     setSession({ token, user });
   }
 
-  async function signUp(data: {
-    nombre: string;
-    email: string;
-    password: string;
-    rol: Rol;
-  }) {
+  async function signUp(data) {
     await registrar(data);
     await signIn(data.email, data.password);
   }

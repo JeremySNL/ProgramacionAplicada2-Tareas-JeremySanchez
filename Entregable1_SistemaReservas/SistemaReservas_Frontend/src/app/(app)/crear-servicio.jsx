@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ApiError } from '@/api/client';
-import { crearServicio } from '@/api/servicios';
+import { ApiError } from '@/services/api';
+import { crearServicio } from '@/features/servicios/api';
 import { useSession } from '@/auth/session';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -26,7 +26,7 @@ export default function CrearServicioScreen() {
   const [duracion, setDuracion] = useState('');
   const [precio, setPrecio] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   async function onSubmit() {
     if (!session) return;
