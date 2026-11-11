@@ -37,6 +37,7 @@ export async function configurarNotificaciones() {
     if (!permisos.granted && permisos.canAskAgain) {
       await Notifications.requestPermissionsAsync();
     }
+    console.log("Configuro notificaciones");
   } catch {}
 }
 
@@ -51,7 +52,7 @@ export async function programarRecordatorio(reserva) {
     if (!permisos.granted) return null;
 
     const nombreServicio = reserva.servicio?.nombre ?? "tu servicio";
-
+    console.log(disparo);
     return await Notifications.scheduleNotificationAsync({
       identifier: idRecordatorio(reserva.id),
       content: {
@@ -76,6 +77,7 @@ export async function cancelarRecordatorio(reservaId) {
     await Notifications.cancelScheduledNotificationAsync(
       idRecordatorio(reservaId),
     );
+    console.log("Notificacion cancelada");
   } catch {}
 }
 
